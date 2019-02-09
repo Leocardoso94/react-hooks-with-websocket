@@ -1,28 +1,24 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
+const ws = new WebSocket("ws://127.0.0.1:5000");
+
+const App = () => {
+  const [foo, setData] = useState([]);
+  ws.onmessage = function(event) {
+    setData([JSON.parse(event.data), ...foo]);
+  };
+
+  ws.onclose = console.warn;
+
+  ws.onerror = console.error;
+
+  return (
+    <ul>
+      {foo.map(data => (
+        <li key={data.id}>{data.id}</li>
+      ))}
+    </ul>
+  );
+};
 
 export default App;
